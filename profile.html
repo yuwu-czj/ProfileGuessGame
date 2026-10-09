@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜～～關於我的一些小線索</title>
+    <style>
+        /* 基礎設定 */
+        :root {
+            --bg-page: #f9fafb;
+            --bg-card: #ffffff;
+            --text-main: #374151;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+        }
+
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* 頂部導覽列 */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 999px;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            color: var(--text-light);
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { background-color: #f3f4f6; }
+        .tab-btn.active {
+            background-color: #1f2937;
+            color: white;
+            border-color: #1f2937;
+        }
+
+        /* 主要內容區塊 */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 700px;
+            min-height: 550px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        .view-section { display: none; flex-direction: column; height: 100%; flex-grow: 1; }
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease-in-out; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 首頁樣式 */
+        .home-view { align-items: center; justify-content: center; text-align: center; flex-grow: 1; }
+        .home-title { font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; letter-spacing: 0.1em; color: #1f2937; }
+        .home-desc { font-size: 1.125rem; color: var(--text-light); margin-bottom: 2rem; }
+        .home-footer { margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: left; font-size: 0.9rem; color: var(--text-light); line-height: 1.6; width: 100%; }
+        .home-footer strong { color: #374151; font-size: 1.05rem; }
+
+        /* 遊戲介面樣式 */
+        .input-group { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+        .input-field {
+            flex-grow: 1;
+            padding: 12px 16px;
+            font-size: 1.125rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-field:focus { border-color: var(--primary); }
+        .confirm-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0 24px;
+            font-size: 1.125rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .confirm-btn:hover { background-color: var(--primary-hover); }
+
+        /* 按鈕網格系統 */
+        .btn-grid {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            align-content: start;
+        }
+        
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-cols-5 { grid-template-columns: repeat(5, 1fr); }
+
+        @media (max-width: 500px) {
+            .btn-grid { gap: 8px; }
+            .opt-btn { padding: 8px; font-size: 0.9rem; }
+            .grid-cols-5 .opt-btn { font-size: 0.8rem; padding: 6px; }
+        }
+
+        /* 選項按鈕樣式 */
+        .opt-btn {
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .opt-btn:active { transform: scale(0.95); }
+        .opt-btn:hover { filter: brightness(0.95); }
+        .opt-en-text { font-size: 0.75rem; opacity: 0.7; margin-top: 2px; font-weight: normal; }
+
+        /* MBTI, 星座 顏色 */
+        .color-purple { background-color: #e9d5ff; color: #581c87; border-color: #d8b4fe; }
+        .color-yellow { background-color: #fef08a; color: #854d0e; border-color: #fde047; }
+        .color-green  { background-color: #bbf7d0; color: #14532d; border-color: #86efac; }
+        .color-blue   { background-color: #bfdbfe; color: #1e3a8a; border-color: #93c5fd; }
+        
+        .color-water  { background-color: #bfdbfe; color: #1e3a8a; border-color: #93c5fd; }
+        .color-earth  { background-color: #fef08a; color: #854d0e; border-color: #fde047; }
+        .color-fire   { background-color: #fca5a5; color: #7f1d1d; border-color: #f87171; }
+        .color-air    { background-color: #e5e7eb; color: #374151; border-color: #9ca3af; }
+        
+        /* 👑 日主與主星五行顏色 */
+        .dm-wood  { background-color: #dcfce7; color: #166534; border-color: #86efac; } /* 綠色 */
+        .dm-fire  { background-color: #fee2e2; color: #991b1b; border-color: #fca5a5; } /* 紅色 */
+        .dm-earth { background-color: #fef9c3; color: #854d0e; border-color: #fde047; } /* 黃色 */
+        .dm-metal { background-color: #f3f4f6; color: #374151; border-color: #d1d5db; } /* 白色/灰色 */
+        .dm-water { background-color: #dbeafe; color: #1e3a8a; border-color: #93c5fd; } /* 藍色 */
+
+        .selected-star { outline: 3px solid var(--primary); outline-offset: -2px; background-color: #dbeafe; filter: brightness(0.9); }
+
+        /* 提示區塊 */
+        .hint-box {
+            background-color: #f9fafb;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            min-height: 120px;
+            margin-top: auto;
+        }
+        .hint-title { font-weight: bold; color: var(--text-light); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .hint-text { color: var(--text-main); font-size: 1.125rem; white-space: pre-line; line-height: 1.5; }
+
+        /* 相簿區塊樣式 (修改支援長圖滾動) */
+        .gallery-container { display: none; flex-direction: column; align-items: center; margin-top: 1.5rem; width: 100%; border-top: 2px dashed var(--border-color); padding-top: 1.5rem; animation: fadeIn 0.4s ease-out; }
+        .gallery-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 1rem; }
+        .gallery-tab { padding: 8px 20px; border-radius: 999px; border: 2px solid #d1d5db; background: transparent; cursor: pointer; font-weight: bold; transition: 0.2s; color: #4b5563; }
+        .gallery-tab:hover { background-color: #f3f4f6; }
+        .gallery-tab.active { background: #581c87; color: white; border-color: #581c87; }
+        
+        .gallery-view { 
+            position: relative; 
+            width: 100%; 
+            max-width: 450px; 
+            height: 550px; /* 固定高度容器 */
+            max-height: 65vh; 
+            background: #f3f4f6; 
+            border-radius: 16px; 
+            border: 1px solid var(--border-color); 
+            overflow: hidden; 
+        }
+        
+        /* 內部可滾動區域 */
+        .gallery-scroll-area {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto; /* 允許垂直滾動 */
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 圖片滿版，高度自適應 */
+        .gallery-img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+        }
+
+        /* 滾動條美化 */
+        .gallery-scroll-area::-webkit-scrollbar { width: 6px; }
+        .gallery-scroll-area::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.9); border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: 0.2s; color: #374151; font-weight: bold; z-index: 10; }
+        .nav-btn:hover { background: white; transform: translateY(-50%) scale(1.1); }
+        .nav-btn:active { transform: translateY(-50%) scale(0.95); }
+        .nav-btn.prev { left: 10px; }
+        .nav-btn.next { right: 10px; }
+        
+        .gallery-counter { margin-top: 12px; font-size: 0.95rem; font-weight: bold; color: var(--text-light); letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部選項導覽 -->
+    <div class="tabs">
+        <button onclick="switchTab('mbti')" class="tab-btn" id="tab-mbti">線上 MBTI</button>
+        <button onclick="switchTab('zodiac')" class="tab-btn" id="tab-zodiac">星座</button>
+        <button onclick="switchTab('star')" class="tab-btn" id="tab-star">命宮主星</button>
+        <button onclick="switchTab('daymaster')" class="tab-btn" id="tab-daymaster">主日 (日主)</button>
+    </div>
+
+    <!-- 內容顯示區 -->
+    <div class="card">
+        
+        <!-- 首頁 (Welcome) -->
+        <div id="view-home" class="view-section active home-view">
+            <h1 class="home-title">猜～～</h1>
+            <p class="home-desc">小小的猜謎遊戲，歡迎來猜猜看關於我的一些小線索。<br>請點擊上方的分類開始。</p>
+            <div class="home-footer">
+                這些是我個人測試與整理的結果，僅供參考，不必過度相信。分類可以作為認識一個人的線索，但不能代替真正的了解。<br><br>
+                <strong>比起標籤，實際相處才更接近一個人的樣子。</strong>
+            </div>
+        </div>
+
+        <!-- 遊戲介面 -->
+        <div id="view-game" class="view-section">
+            <!-- 輸入區塊 -->
+            <div class="input-group">
+                <input type="text" id="game-input" placeholder="請輸入或點選下方按鈕..." class="input-field">
+                <button onclick="checkAnswer()" class="confirm-btn">確認</button>
+            </div>
+
+            <!-- 按鈕網格區塊 (動態生成) -->
+            <div id="btn-grid" class="btn-grid">
+                <!-- Buttons will be injected here -->
+            </div>
+
+            <!-- 提示區塊 -->
+            <div class="hint-box">
+                <div class="hint-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                    提示
+                </div>
+                <div id="hint-text" class="hint-text">
+                    準備好就可以開始猜囉！
+                </div>
+            </div>
+
+            <!-- 隱藏的專屬相簿區塊 (僅 INTJ 猜對時顯示) -->
+            <div id="mbti-gallery" class="gallery-container">
+                <div class="gallery-tabs">
+                    <button onclick="setGalleryType('T')" class="gallery-tab" id="gtab-T">INTJ-T</button>
+                    <button onclick="setGalleryType('TC')" class="gallery-tab" id="gtab-TC">INTJ-TC</button>
+                    <button onclick="setGalleryType('OH')" class="gallery-tab" id="gtab-OH">INTJ-OH</button>
+                </div>
+                
+                <div class="gallery-view">
+                    <button onclick="prevImage()" class="nav-btn prev">&#10094;</button>
+                    <!-- 新增可滾動的內部區塊來包覆圖片 -->
+                    <div class="gallery-scroll-area" id="gallery-scroll-area">
+                        <img id="gallery-img" class="gallery-img" src="" alt="INTJ 照片">
+                    </div>
+                    <button onclick="nextImage()" class="nav-btn next">&#10095;</button>
+                </div>
+                
+                <div id="gallery-counter" class="gallery-counter">1 / 4</div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // 資料設定與分類顏色對應
+        const data = {
+            mbti: {
+                target: "INTJ",
+                items: [
+                    { name: "INTJ", color: "color-purple" }, { name: "INTP", color: "color-purple" }, { name: "ENTJ", color: "color-purple" }, { name: "ENTP", color: "color-purple" },
+                    { name: "INFJ", color: "color-green" }, { name: "INFP", color: "color-green" }, { name: "ENFJ", color: "color-green" }, { name: "ENFP", color: "color-green" },
+                    { name: "ISTJ", color: "color-blue" }, { name: "ISFJ", color: "color-blue" }, { name: "ESTJ", color: "color-blue" }, { name: "ESFJ", color: "color-blue" },
+                    { name: "ISTP", color: "color-yellow" }, { name: "ISFP", color: "color-yellow" }, { name: "ESTP", color: "color-yellow" }, { name: "ESFP", color: "color-yellow" }
+                ]
+            },
+            zodiac: {
+                target: "雙魚",
+                items: [
+                    { name: "雙魚", en: "Pisces", color: "color-water", type: "水" }, { name: "巨蟹", en: "Cancer", color: "color-water", type: "水" }, { name: "天蠍", en: "Scorpio", color: "color-water", type: "水" },
+                    { name: "牡羊", en: "Aries", color: "color-fire", type: "火" }, { name: "獅子", en: "Leo", color: "color-fire", type: "火" }, { name: "射手", en: "Sagittarius", color: "color-fire", type: "火" },
+                    { name: "金牛", en: "Taurus", color: "color-earth", type: "土" }, { name: "處女", en: "Virgo", color: "color-earth", type: "土" }, { name: "魔羯", en: "Capricorn", color: "color-earth", type: "土" },
+                    { name: "雙子", en: "Gemini", color: "color-air", type: "風" }, { name: "天秤", en: "Libra", color: "color-air", type: "風" }, { name: "水瓶", en: "Aquarius", color: "color-air", type: "風" }
+                ]
+            },
+            star: {
+                target: ["武曲", "天相"],
+                items6: [
+                    { name: "紫微", color: "dm-earth" }, { name: "天機", color: "dm-wood" }, { name: "太陽", color: "dm-fire" }, 
+                    { name: "武曲", color: "dm-metal" }, { name: "天同", color: "dm-water" }, { name: "廉貞", color: "dm-fire" }
+                ],
+                items8: [
+                    { name: "天府", color: "dm-earth" }, { name: "太陰", color: "dm-water" }, { name: "貪狼", color: "dm-wood" }, { name: "巨門", color: "dm-water" }, 
+                    { name: "天相", color: "dm-water" }, { name: "天梁", color: "dm-earth" }, { name: "七殺", color: "dm-metal" }, { name: "破軍", color: "dm-water" }
+                ]
+            },
+            daymaster: {
+                target: "乙木",
+                items: [
+                    { name: "甲木", color: "dm-wood" }, { name: "丙火", color: "dm-fire" }, { name: "戊土", color: "dm-earth" }, { name: "庚金", color: "dm-metal" }, { name: "壬水", color: "dm-water" },
+                    { name: "乙木", color: "dm-wood" }, { name: "丁火", color: "dm-fire" }, { name: "己土", color: "dm-earth" }, { name: "辛金", color: "dm-metal" }, { name: "癸水", color: "dm-water" }
+                ]
+            }
+        };
+
+        let currentMode = '';
+        let starFirstAttempt = true;
+        let selectedStars = [];
+
+        // --- 相簿資料設定 ---
+        const galleryInfo = {
+            'T': { count: 4, prefix: 'picture/INTJ-T' },
+            'TC': { count: 6, prefix: 'picture/INTJ-TC' },
+            'OH': { count: 5, prefix: 'picture/INTJ-OH' }
+        };
+        let currentGalleryType = 'T';
+        let currentImageIndex = 0;
+
+        // 綁定 Enter 鍵觸發確認
+        document.getElementById('game-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkAnswer();
+        });
+
+        function switchTab(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-game').classList.add('active');
+            
+            // 更新頁籤樣式
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${mode}`).classList.add('active');
+
+            resetGameUI();
+            renderButtons(mode);
+        }
+
+        function resetGameUI() {
+            document.getElementById('game-input').value = '';
+            setHint('準備好就可以開始猜囉！');
+            selectedStars = [];
+            if(currentMode === 'star') starFirstAttempt = true;
+            
+            // 隱藏相簿
+            document.getElementById('mbti-gallery').style.display = 'none';
+        }
+
+        function setHint(text) {
+            document.getElementById('hint-text').innerText = text;
+        }
+
+        function renderButtons(mode) {
+            const grid = document.getElementById('btn-grid');
+            grid.innerHTML = '';
+            grid.className = 'btn-grid'; // reset
+
+            if (mode === 'mbti') {
+                grid.classList.add('grid-cols-4');
+                data.mbti.items.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = `opt-btn ${item.color}`;
+                    btn.innerText = item.name;
+                    btn.onclick = () => { document.getElementById('game-input').value = item.name; checkAnswer(); };
+                    grid.appendChild(btn);
+                });
+            } 
+            else if (mode === 'zodiac') {
+                grid.classList.add('grid-cols-3');
+                data.zodiac.items.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = `opt-btn ${item.color}`;
+                    btn.innerHTML = `<span>${item.name}</span><span class="opt-en-text">${item.en}</span>`;
+                    btn.onclick = () => { document.getElementById('game-input').value = item.name; checkAnswer(); };
+                    grid.appendChild(btn);
+                });
+            }
+            else if (mode === 'star') {
+                const createGroup = (items, colsClass) => {
+                    const group = document.createElement('div');
+                    group.className = `btn-grid ${colsClass}`;
+                    group.style.marginBottom = '0';
+                    items.forEach(star => {
+                        const btn = document.createElement('button');
+                        btn.className = `opt-btn ${star.color} star-btn`;
+                        btn.innerText = star.name;
+                        btn.onclick = (e) => toggleStar(star.name, e.currentTarget);
+                        group.appendChild(btn);
+                    });
+                    return group;
+                };
+                grid.style.gap = '20px'; // 區塊間距
+                grid.appendChild(createGroup(data.star.items6, 'grid-cols-3'));
+                grid.appendChild(createGroup(data.star.items8, 'grid-cols-4'));
+            }
+            else if (mode === 'daymaster') {
+                grid.classList.add('grid-cols-5');
+                data.daymaster.items.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = `opt-btn ${item.color}`;
+                    btn.innerText = item.name;
+                    btn.onclick = () => { document.getElementById('game-input').value = item.name; checkAnswer(); };
+                    grid.appendChild(btn);
+                });
+            }
+        }
+
+        function toggleStar(star, btnElement) {
+            const idx = selectedStars.indexOf(star);
+            if (idx > -1) {
+                selectedStars.splice(idx, 1);
+                btnElement.classList.remove('selected-star');
+                if (document.getElementById('hint-text').innerText.includes('最多只能點選兩顆')) {
+                    setHint("準備好就可以開始猜囉！");
+                }
+            } else {
+                if (selectedStars.length >= 2) {
+                    setHint("最多只能點選兩顆主星喔！請先取消已選的主星。");
+                    return; 
+                }
+                selectedStars.push(star);
+                btnElement.classList.add('selected-star');
+            }
+            document.getElementById('game-input').value = selectedStars.join(' ');
+        }
+
+        // --- 相簿切換邏輯 ---
+        function setGalleryType(type) {
+            currentGalleryType = type;
+            currentImageIndex = 0; // 重置到第一張
+            
+            // 更新按鈕樣式
+            document.querySelectorAll('.gallery-tab').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`gtab-${type}`).classList.add('active');
+            
+            updateGalleryView();
+        }
+
+        function prevImage() {
+            const max = galleryInfo[currentGalleryType].count;
+            currentImageIndex = (currentImageIndex - 1 + max) % max;
+            updateGalleryView();
+        }
+
+        function nextImage() {
+            const max = galleryInfo[currentGalleryType].count;
+            currentImageIndex = (currentImageIndex + 1) % max;
+            updateGalleryView();
+        }
+
+        function updateGalleryView() {
+            const imgEl = document.getElementById('gallery-img');
+            const counterEl = document.getElementById('gallery-counter');
+            const scrollArea = document.getElementById('gallery-scroll-area');
+            
+            // 組合圖片路徑 e.g., picture/INTJ-OH0.jpg
+            const prefix = galleryInfo[currentGalleryType].prefix;
+            imgEl.src = `${prefix}${currentImageIndex}.jpg`;
+            
+            // 每次換圖都自動滾動回最上面，方便閱讀長圖
+            scrollArea.scrollTop = 0;
+            
+            // 更新計數器 (顯示 1 開頭)
+            const max = galleryInfo[currentGalleryType].count;
+            counterEl.innerText = `${currentImageIndex + 1} / ${max}`;
+        }
+
+        // 核心檢查邏輯
+        function checkAnswer() {
+            const inputVal = document.getElementById('game-input').value.trim().toUpperCase();
+            if (!inputVal && currentMode !== 'star') {
+                setHint("請輸入內容喔！");
+                return;
+            }
+
+            if (currentMode === 'mbti') {
+                if(inputVal === data.mbti.target) {
+                    setHint(`🎉 恭喜猜對了！我是 ${data.mbti.target} \n你可以在下方切換 (-T / -TC / -OH) 看看照片！`);
+                    
+                    // 顯示相簿區塊並初始化載入 'T' 分類
+                    document.getElementById('mbti-gallery').style.display = 'flex';
+                    setGalleryType('T');
+
+                } else {
+                    document.getElementById('mbti-gallery').style.display = 'none'; // 猜錯則隱藏
+
+                    let correctCount = 0;
+                    for (let i = 0; i < 4; i++) {
+                        if (inputVal[i] && data.mbti.target.includes(inputVal[i])) correctCount++;
+                    }
+                    if(inputVal.length !== 4) {
+                        setHint("請輸入4個英文字母的 MBTI 類型！");
+                    } else {
+                        setHint(`對了 ${correctCount} 個提示字母！再試試看！`);
+                    }
+                }
+            } 
+            
+            else if (currentMode === 'zodiac') {
+                let matchItem = data.zodiac.items.find(z => z.name === inputVal || z.en.toUpperCase() === inputVal);
+                
+                if (!matchItem) {
+                    setHint("沒有這個星座喔！請檢查輸入是否正確。");
+                    return;
+                }
+
+                if (matchItem.name === data.zodiac.target) {
+                    setHint("🎉 恭喜猜對了！我是 雙魚座 Pisces ♓");
+                } else {
+                    if (matchItem.type === "水") {
+                        setHint("提示：是水相但其他星座。\n我這個星座裡有的節日：\n🌳植樹節、π圓周率日、🕊️反侵略日、⚕️國醫節");
+                    } else {
+                        setHint(`提示：非${matchItem.type}相！再猜猜看。`);
+                    }
+                }
+            } 
+            
+            else if (currentMode === 'star') {
+                let inputStars = inputVal.replace(/ /g, '');
+                let parsedStars = [];
+                const allStars = [...data.star.items6, ...data.star.items8].map(s => s.name);
+                allStars.forEach(s => {
+                    if(inputStars.includes(s) && !parsedStars.includes(s)) parsedStars.push(s);
+                });
+                
+                let checkList = selectedStars.length > 0 ? selectedStars : parsedStars;
+
+                if (checkList.length === 0) {
+                    setHint("請點選或輸入主星！(我有兩顆主星喔)");
+                    return;
+                }
+                
+                if (checkList.length > 2) {
+                    setHint("錯誤：最多只能選兩顆星喔！");
+                    return;
+                }
+
+                let correctCount = 0;
+                checkList.forEach(s => {
+                    if (data.star.target.includes(s)) correctCount++;
+                });
+
+                if (checkList.length === 1 || starFirstAttempt) {
+                    if (checkList.length === 2 && correctCount === 2) {
+                        setHint(`🎉 恭喜完全猜中！我是 ${data.star.target.join(' ')}`);
+                    } else {
+                        setHint(`提示：有兩顆主星喔！\n目前猜對了 ${correctCount} 顆。`);
+                        starFirstAttempt = false;
+                    }
+                } else if (checkList.length === 2) {
+                    if (correctCount === 2) {
+                        setHint(`🎉 恭喜完全猜中！我是 ${data.star.target.join(' ')}`);
+                    } else {
+                        setHint(`我確實是兩顆星，但錯了喔。\n目前對了 ${correctCount} 顆星。`);
+                    }
+                }
+            } 
+            
+            else if (currentMode === 'daymaster') {
+                if (inputVal === data.daymaster.target || inputVal === '乙') {
+                    setHint(`🎉 恭喜猜對了！我是 ${data.daymaster.target}`);
+                } else {
+                    let isExist = data.daymaster.items.find(d => d.name === inputVal || d.name[0] === inputVal);
+                    if(!isExist) {
+                        setHint("沒有這個日主喔！請輸入正確的十天干。");
+                    } else {
+                        setHint("猜錯囉，再試試看！");
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
